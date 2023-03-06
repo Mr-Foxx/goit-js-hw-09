@@ -19,18 +19,27 @@ function handleFormIsLessThenThero() {
 function hendleFormSubmit(event) {
   event.preventDefault();
 
-  const delay = Number(form.delay.value);
-  const step = Number(form.step.value);
-  const amount = Number(form.amount.value);
+  const delay = Number(event.target.delay.value);
+  const step = Number(event.target.step.value);
+  const amount = Number(event.target.amount.value);
 
   for (let i = 1; i <= amount; i += 1) {
     const amountPosition = i;
     const currentDelay = delay + i * step;
 
-    createPromise(amountPosition, currentDelay);
-
-    form.reset();
+    createPromise(amountPosition, currentDelay)
+      .then(({ position, delay }) => {
+        Notiflix.Notify.success(
+          `✅ Fulfilled promise ${position} in ${delay}ms`
+        );
+      })
+      .catch(({ position, delay }) => {
+        Notiflix.Notify.failure(
+          `❌ Rejected promise ${position} in ${delay}ms`
+        );
+      });
   }
+  event.target.reset();
 }
 
 function createPromise(position, delay) {
@@ -43,11 +52,5 @@ function createPromise(position, delay) {
         reject({ position, delay });
       }
     }, delay);
-  })
-    .then(({ position, delay }) => {
-      Notiflix.Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-    })
-    .catch(({ position, delay }) => {
-      Notiflix.Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-    });
+  });
 }

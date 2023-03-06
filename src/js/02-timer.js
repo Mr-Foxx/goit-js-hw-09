@@ -22,9 +22,9 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     const selectedDate = selectedDates[0];
-    const nowTime = new Date();
+    const nowTime = Date.now();
 
-    if (selectedDate.getTime() < nowTime.getTime()) {
+    if (selectedDate.getTime() < nowTime) {
       startBtn.disabled = true;
       Notiflix.Notify.warning('Please choose a date in the future');
     } else {
@@ -41,7 +41,7 @@ let intervalId = null;
 
 function startTimer() {
   const selectedDate = new Date(dateInput.value);
-  const nowDate = new Date();
+  const nowDate = Date.now();
   const deltaTime = selectedDate - nowDate;
 
   if (deltaTime <= 0) {
@@ -49,11 +49,14 @@ function startTimer() {
     startBtn.disabled = true;
     Notiflix.Notify.success('Finished');
     setTimeout(() => {
-      reload();
+      // reload();
     }, 1000);
     return;
   }
+  updateTimer(deltaTime);
+}
 
+function updateTimer(deltaTime) {
   const { days, hours, minutes, seconds } = convertMs(deltaTime);
 
   daysRef.textContent = addLeadingZero(days);
